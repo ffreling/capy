@@ -102,7 +102,7 @@ pub fn Widgeting(comptime T: type) type {
 
         /// Increase the number of references to this component.
         pub fn ref(self: *T) void {
-            _ = self.widget_data.refcount.fetchAdd(1, .Monotonic);
+            _ = self.widget_data.refcount.fetchAdd(1, .monotonic);
         }
 
         /// Decrease the number of references to this component, that is tell Capy
@@ -111,8 +111,8 @@ pub fn Widgeting(comptime T: type) type {
         /// This is why this function must only be called after you stopped using a pointer
         /// to the component, as using the pointer after unref() may cause a Use-After-Free.
         pub fn unref(self: *T) void {
-            std.debug.assert(self.widget_data.refcount.load(.Monotonic) != 0);
-            if (self.widget_data.refcount.fetchSub(1, .AcqRel) == 1) {
+            std.debug.assert(self.widget_data.refcount.load(.monotonic) != 0);
+            if (self.widget_data.refcount.fetchSub(1, .acq_rel) == 1) {
                 self.deinit();
             }
         }
@@ -345,7 +345,7 @@ pub fn GenerateConfigStruct(comptime T: type) type {
         }};
 
         const t = @Type(.{ .Struct = .{
-            .layout = .Auto,
+            .layout = .auto,
             .backing_integer = null,
             .fields = config_fields,
             .decls = &.{},

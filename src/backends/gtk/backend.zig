@@ -77,7 +77,7 @@ pub const Window = struct {
     pub usingnamespace Events(Window);
 
     fn gtkWindowHidden(_: *c.GtkWidget, _: usize) callconv(.C) void {
-        _ = activeWindows.fetchSub(1, .Release);
+        _ = activeWindows.fetchSub(1, .release);
     }
 
     pub fn create() BackendError!Window {
@@ -202,7 +202,7 @@ pub const Window = struct {
 
     pub fn show(self: *Window) void {
         c.gtk_widget_show(self.peer);
-        _ = activeWindows.fetchAdd(1, .Release);
+        _ = activeWindows.fetchAdd(1, .release);
     }
 
     pub fn close(self: *Window) void {
@@ -1349,6 +1349,6 @@ pub fn runStep(step: shared.EventLoopStep) bool {
     if (GTK_VERSION.min.order(.{ .major = 4, .minor = 0, .patch = 0 }) != .lt) {
         return c.g_list_model_get_n_items(c.gtk_window_get_toplevels()) > 0;
     } else {
-        return activeWindows.load(.Acquire) != 0;
+        return activeWindows.load(.acquire) != 0;
     }
 }
